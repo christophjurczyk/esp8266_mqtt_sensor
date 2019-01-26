@@ -29,6 +29,7 @@
 #define DPRINT(...)    Serial.print(__VA_ARGS__)
 #define DPRINTLN(...)  Serial.println(__VA_ARGS__)
 #else
+#define DBEGIN(...)
 #define DPRINT(...)
 #define DPRINTLN(...)
 #endif
@@ -98,9 +99,6 @@ void loop() {
   /** Send measurements via MQTT */
   sendSensorData(sensor_data);
 
-  /** Wait for a moment... */
-  delay(100);
-
   /** Put ESP in sleep mode to save energy */
   espDeepSleep();
 }
@@ -134,9 +132,10 @@ void MqttWifiConnect(void) {
 
   /** Connect to MQTT server */
   trial_counter = 0;
+  DPRINTLN("Try to connect to MQTT...");
   while (!mqtt.connect(MQTThost)) {
     trial_counter++;
-    DPRINT(".");
+    DPRINTLN("Try to connect to MQTT...");
 
     if (trial_counter > WIFI_MQTT_TRIALS)
     {
@@ -188,8 +187,11 @@ TypeSensorData readSensorData(void) {
 */
 void espDeepSleep(void)
 {
+  DPRINTLN("Bye bye...");
+
+  /** Wait for a moment... */
+  delay(100);
+
   ESP.deepSleep(WAKEUP_TIME * 1e6, WAKE_RF_DEFAULT);
   DPRINTLN("Ups...this line should be never reached...");
 }
-
-
